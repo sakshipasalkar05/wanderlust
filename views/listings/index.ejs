@@ -1,0 +1,151 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<style>
+    #filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter {
+        text-align: center;
+        margin-top: 2rem;
+        margin-right: 2rem;
+        opacity: 0.7;
+        text-decoration: none;
+        color: #222222;
+    }
+
+    .filter:hover {
+        opacity: 1;
+        cursor: pointer;
+    }
+
+    .filter.active {
+        opacity: 1;
+        border-bottom: 2px solid #222222;
+    }
+
+    .filter p {
+        font-size: 0.8rem;
+    }
+
+    .tax-toggle {
+        border: 0.5px solid black;
+        border-radius: 1rem;
+        height: 3.25rem;
+        padding: 1rem;
+        margin-left: 2rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .price-total {
+        display: none;
+    }
+
+    .show-total .price-base {
+        display: none;
+    }
+
+    .show-total .price-total {
+        display: inline;
+    }
+</style>
+
+<%
+const icons = {
+    "Trending": "fa-solid fa-fire",
+    "Rooms": "fa-solid fa-bed",
+    "Iconic Cities": "fa-solid fa-mountain-city",
+    "Castles": "fa-brands fa-fort-awesome",
+    "Amazing Pools": "fa-solid fa-person-swimming",
+    "Camping": "fa-solid fa-campground",
+    "Farms": "fa-solid fa-cow",
+    "Arctic": "fa-regular fa-snowflake",
+    "Domes": "fa-solid fa-igloo",
+    "Boats": "fa-solid fa-ship"
+};
+%>
+<div id="filters">
+    <% for (let c of categories) { %>
+        <a href="<%= activeCategory === c ? '/listings' : '/listings?category=' + encodeURIComponent(c) %>"
+           class="filter <%= activeCategory === c ? 'active' : '' %>">
+            <div><i class="<%= icons[c] %>"></i></div>
+            <p><%= c %></p>
+        </a>
+    <% } %>
+    
+    <div class="tax-toggle">
+        <div class="form-check-reverse form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+            <label class="form-check-label" for="switchCheckDefault">Display total after Taxes</label>
+        </div>
+    </div>
+</div>
+
+<% if (allListings.length === 0) { %>
+    <p class="mt-4">No listings found<%= searchQuery ? ` for "${searchQuery}"` : "" %>.</p>
+<% } %>
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3" id="listings-row">
+    <% for(let listing of allListings) { %>
+        <a href="/listings/<%= listing._id %>" class="listing-link">
+            <div class="card col listing-card" >
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                <p class="card-text">
+                    <b><%= listing.title %></b><br>
+                    <span class="price-base">&#8377; <%= listing.price.toLocaleString("en-IN") %> / night</span>
+                    <span class="price-total">&#8377; <%= Math.round(listing.price * 1.18).toLocaleString("en-IN") %> / night <i>incl. 18% GST</i></span>
+                </p>
+                </div>   
+            </div>
+        </a> 
+    <% } %>
+</div>
+
+<% if (totalPages > 1) {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("q", searchQuery);
+    if (activeCategory) params.set("category", activeCategory);
+    const pageUrl = (p) => {
+        const s = new URLSearchParams(params);
+        s.set("page", p);
+        return "/listings?" + s.toString();
+    };
+%>
+<nav class="mt-3 mb-4" aria-label="Listings pages">
+    <ul class="pagination justify-content-center">
+        <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= pageUrl(page - 1) %>">Previous</a>
+        </li>
+        <% for (let p = 1; p <= totalPages; p++) { %>
+            <li class="page-item <%= p === page ? 'active' : '' %>">
+                <a class="page-link" href="<%= pageUrl(p) %>"><%= p %></a>
+            </li>
+        <% } %>
+        <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= pageUrl(page + 1) %>">Next</a>
+        </li>
+    </ul>
+</nav>
+<% } %>
+
+<script>
+    const taxSwitch = document.getElementById("switchCheckDefault");
+    const listingsRow = document.getElementById("listings-row");
+
+    function applyTax(on) {
+        taxSwitch.checked = on;
+        listingsRow.classList.toggle("show-total", on);
+    }
+
+    applyTax(sessionStorage.getItem("showTotal") === "1");
+
+    taxSwitch.addEventListener("change", () => {
+        applyTax(taxSwitch.checked);
+        sessionStorage.setItem("showTotal", taxSwitch.checked ? "1" : "0");
+    });
+</script>
+
