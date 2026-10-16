@@ -1,23 +1,138 @@
 <% layout("/layouts/boilerplate") %>
-<h3 class="mt-3">My Wishlist</h3>
+<style>
+    .stay-card-wrap {
+        position: relative;
+    }
+
+    .stay-card {
+        display: block;
+        text-decoration: none;
+        color: var(--ink);
+    }
+
+    .stay-img-wrap {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius-card);
+        aspect-ratio: 4 / 3;
+        background: var(--soft);
+    }
+
+    .stay-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s;
+    }
+
+    .stay-card:hover .stay-img-wrap img {
+        transform: scale(1.06);
+    }
+
+    .stay-badge {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--ink);
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.3rem 0.75rem;
+        border-radius: 2rem;
+    }
+
+    .stay-body {
+        padding: 0.75rem 0.25rem 0;
+    }
+
+    .stay-title {
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .stay-place {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    .stay-price {
+        margin-top: 0.25rem;
+        font-size: 0.95rem;
+    }
+
+    /* Remove-from-wishlist button, sits on top of the image */
+    .remove-form {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        margin: 0;
+        z-index: 2;
+    }
+
+    .remove-btn {
+        width: 2.4rem;
+        height: 2.4rem;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--brand);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.15s, background-color 0.15s, color 0.15s;
+    }
+
+    .remove-btn:hover {
+        background-color: var(--brand);
+        color: white;
+        transform: scale(1.1);
+    }
+</style>
+
+<div class="mt-4">
+    <h3 class="page-title">My wishlist</h3>
+    <p class="page-subtitle"><%= listings.length %> saved place<%= listings.length === 1 ? "" : "s" %></p>
+</div>
 
 <% if (listings.length === 0) { %>
-    <p class="mt-3">You haven't saved any listings yet. <a href="/listings">Browse listings</a></p>
+    <div class="text-center py-5">
+        <i class="fa-regular fa-heart" style="font-size: 3rem; color: var(--brand);"></i>
+        <h4 class="mt-3">Nothing saved yet</h4>
+        <p class="text-muted">Tap "Save to wishlist" on any listing and it will show up here.</p>
+        <a href="/listings" class="btn btn-brand">Explore listings</a>
+    </div>
 <% } else { %>
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-5">
         <% for (let listing of listings) { %>
-            <a href="/listings/<%= listing._id %>" class="listing-link">
-                <div class="card col listing-card">
-                    <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
-                    <div class="card-img-overlay"></div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            <b><%= listing.title %></b><br>
-                            &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
-                        </p>
-                    </div>
+            <div class="col">
+                <div class="stay-card-wrap">
+                    <a href="/listings/<%= listing._id %>" class="stay-card">
+                        <div class="stay-img-wrap">
+                            <img src="<%= listing.image.url %>" alt="<%= listing.title %>" loading="lazy">
+                            <% if (listing.category) { %>
+                                <span class="stay-badge"><%= listing.category %></span>
+                            <% } %>
+                        </div>
+                        <div class="stay-body">
+                            <div class="stay-title"><%= listing.title %></div>
+                            <div class="stay-place"><%= listing.location %>, <%= listing.country %></div>
+                            <div class="stay-price">
+                                <b>&#8377; <%= listing.price.toLocaleString("en-IN") %></b> / night
+                            </div>
+                        </div>
+                    </a>
+
+                    <form method="POST" action="/listings/<%= listing._id %>/wishlist" class="remove-form">
+                        <input type="hidden" name="from" value="wishlist">
+                        <button type="submit" class="remove-btn" title="Remove from wishlist" aria-label="Remove <%= listing.title %> from wishlist">
+                            <i class="fa-solid fa-heart"></i>
+                        </button>
+                    </form>
                 </div>
-            </a>
+            </div>
         <% } %>
     </div>
 <% } %>

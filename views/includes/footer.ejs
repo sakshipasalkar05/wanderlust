@@ -1,14 +1,79 @@
-<footer>
-    <div class="f-info">
-        <div class="f-info-socials">
-            <a href="https://www.facebook.com/airbnb/"><i class="fa-brands fa-facebook" style="color: #222222;"></i></a>
-            <a href="https://www.instagram.com/airbnb/"><i class="fa-brands fa-square-instagram" style="color: #222222;"></i></a>
-            <a href="https://www.linkedin.com/company/airbnb"><i class="fa-brands fa-linkedin" style="color: #222222;"></i></a>
-        </div>
-        <div class="f-info-brand"> &copy; Wanderlust Private Limited</div>
-        <div class="f-info-links">
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
+<style>
+    .site-footer {
+        background-color: var(--soft);
+        border-top: 1px solid #ebebeb;
+        margin-top: 3rem;
+        padding: 2rem 0 1.5rem;
+    }
+
+    .site-footer .footer-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: var(--brand);
+        text-decoration: none;
+    }
+
+    .site-footer .footer-copy {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    .site-footer .footer-links a {
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 0 0.75rem;
+    }
+
+    .site-footer .footer-links a:hover {
+        color: var(--brand);
+    }
+
+    .site-footer .footer-socials a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.4rem;
+        height: 2.4rem;
+        margin: 0 0.25rem;
+        border-radius: 50%;
+        background: white;
+        color: var(--ink);
+        text-decoration: none;
+        box-shadow: var(--shadow-soft);
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .site-footer .footer-socials a:hover {
+        background-color: var(--brand);
+        color: white;
+    }
+</style>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="row align-items-center gy-3 text-center">
+            <div class="col-md-4 text-md-start">
+                <a href="/listings" class="footer-brand"><i class="fa-solid fa-compass"></i> Wanderlust</a>
+                <div class="footer-copy">&copy; Wanderlust Private Limited</div>
+            </div>
+
+            <div class="col-md-4 footer-links">
+                <a href="/listings">Explore</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/terms">Terms</a>
+            </div>
+
+            <div class="col-md-4 text-md-end footer-socials">
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
         </div>
     </div>
 </footer>

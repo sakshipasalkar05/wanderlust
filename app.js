@@ -19,10 +19,23 @@ app.use(
         scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://unpkg.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com", "https://unpkg.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-        imgSrc: ["'self'", "data:", "blob:", "https://res.cloudinary.com", "https://images.unsplash.com", "https://plus.unsplash.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+        connectSrc: ["'self'", "https://cdn.jsdelivr.net", "https://unpkg.com"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://res.cloudinary.com",
+          "https://images.unsplash.com",
+          "https://plus.unsplash.com",
+          "https://tile.openstreetmap.org", // map tiles
+          "https://unpkg.com",              // Leaflet's pin icon
+        ],
         upgradeInsecureRequests: null,
       },
     },
+    // Send the site's origin (not the full URL) to other sites, as OSM requires
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   })
 );
 
@@ -137,6 +150,14 @@ app.use(generalLimiter);
 app.post("/login", authLimiter);
 app.post("/signup", authLimiter);
 
+app.get("/", (req, res) => {
+  // Logged-in users skip the cover page
+  if (req.isAuthenticated()) {
+    return res.redirect("/listings");
+  }
+  res.render("landing.ejs");
+});
+
 app.get("/privacy", (req, res) => {
   res.render("static/privacy.ejs");
 });
@@ -154,7 +175,13 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  // An invalid ObjectId in the URL (like /listings/abc) just means "no such page"
+  if (err.name === "CastError" && err.kind === "ObjectId") {
+    err.statusCode = 404;
+  }
+
   console.error(err.statusCode === 404 ? `404: ${req.method} ${req.originalUrl}` : err);
+
   if (res.headersSent) {
     return next(err);
   }
@@ -171,6 +198,7 @@ app.use((err, req, res, next) => {
   if (statusCode === 404) {
     return res.status(404).render("404.ejs");
   }
+
   res.status(statusCode).render("error.ejs", { err: { message, statusCode } });
 });
 

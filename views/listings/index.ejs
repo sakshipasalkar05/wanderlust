@@ -1,44 +1,128 @@
 <% layout("/layouts/boilerplate.ejs") %>
 <style>
+    /* Filters row */
     #filters {
         display: flex;
-        flex-wrap: wrap;
         align-items: center;
+        justify-content: space-between;
+        gap: 0.25rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        margin-top: 1rem;
+        scrollbar-width: thin;
     }
 
     .filter {
+        flex: 0 0 auto;
         text-align: center;
-        margin-top: 2rem;
-        margin-right: 2rem;
-        opacity: 0.7;
+        padding: 0.75rem 1rem 0.25rem;
+        opacity: 0.65;
         text-decoration: none;
-        color: #222222;
+        color: var(--ink);
+        border-bottom: 2px solid transparent;
+        transition: opacity 0.2s, border-color 0.2s;
     }
 
     .filter:hover {
         opacity: 1;
-        cursor: pointer;
+        border-bottom-color: #dddddd;
     }
 
     .filter.active {
         opacity: 1;
-        border-bottom: 2px solid #222222;
+        border-bottom-color: var(--ink);
+    }
+
+    .filter i {
+        font-size: 1.3rem;
     }
 
     .filter p {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin: 0.4rem 0 0.25rem;
     }
 
     .tax-toggle {
-        border: 0.5px solid black;
-        border-radius: 1rem;
-        height: 3.25rem;
-        padding: 1rem;
-        margin-left: 2rem;
-        display: flex;
-        align-items: center;
+        flex: 0 0 auto;
+        margin-left: 1rem;
+        border: 1px solid #dddddd;
+        border-radius: 2rem;
+        padding: 0.6rem 1.1rem;
+        background: white;
+        white-space: nowrap;
     }
 
+    .tax-toggle .form-check-input:checked {
+        background-color: var(--brand);
+        border-color: var(--brand);
+    }
+
+    .tax-toggle .form-check-input:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 0.2rem rgba(254, 66, 77, 0.2);
+    }
+
+    /* Listing cards */
+    .stay-card {
+        display: block;
+        text-decoration: none;
+        color: var(--ink);
+    }
+
+    .stay-img-wrap {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius-card);
+        aspect-ratio: 4 / 3;
+        background: var(--soft);
+    }
+
+    .stay-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s;
+    }
+
+    .stay-card:hover .stay-img-wrap img {
+        transform: scale(1.06);
+    }
+
+    .stay-badge {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--ink);
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.3rem 0.75rem;
+        border-radius: 2rem;
+    }
+
+    .stay-body {
+        padding: 0.75rem 0.25rem 0;
+    }
+
+    .stay-title {
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .stay-place {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    .stay-price {
+        margin-top: 0.25rem;
+        font-size: 0.95rem;
+    }
+
+    /* Price / price-with-tax switch */
     .price-total {
         display: none;
     }
@@ -49,6 +133,15 @@
 
     .show-total .price-total {
         display: inline;
+    }
+
+    /* Pagination */
+    .pagination .page-link {
+        border: none;
+        border-radius: 0.75rem;
+        margin: 0 0.15rem;
+        font-weight: 600;
+        color:black;
     }
 </style>
 
@@ -66,6 +159,7 @@ const icons = {
     "Boats": "fa-solid fa-ship"
 };
 %>
+
 <div id="filters">
     <% for (let c of categories) { %>
         <a href="<%= activeCategory === c ? '/listings' : '/listings?category=' + encodeURIComponent(c) %>"
@@ -74,34 +168,44 @@ const icons = {
             <p><%= c %></p>
         </a>
     <% } %>
-    
+
     <div class="tax-toggle">
-        <div class="form-check-reverse form-switch">
+        <div class="form-check form-switch m-0">
             <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-            <label class="form-check-label" for="switchCheckDefault">Display total after Taxes</label>
+            <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
         </div>
     </div>
 </div>
 
 <% if (allListings.length === 0) { %>
-    <p class="mt-4">No listings found<%= searchQuery ? ` for "${searchQuery}"` : "" %>.</p>
+    <div class="text-center py-5">
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 3rem; color: var(--muted);"></i>
+        <h4 class="mt-3">No listings found</h4>
+        <p class="text-muted"><%= searchQuery ? `Nothing matched "${searchQuery}".` : "Try a different category." %></p>
+        <a href="/listings" class="btn btn-brand">Clear filters</a>
+    </div>
 <% } %>
 
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3" id="listings-row">
-    <% for(let listing of allListings) { %>
-        <a href="/listings/<%= listing._id %>" class="listing-link">
-            <div class="card col listing-card" >
-                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
-                <div class="card-img-overlay"></div>
-                <div class="card-body">
-                <p class="card-text">
-                    <b><%= listing.title %></b><br>
-                    <span class="price-base">&#8377; <%= listing.price.toLocaleString("en-IN") %> / night</span>
-                    <span class="price-total">&#8377; <%= Math.round(listing.price * 1.18).toLocaleString("en-IN") %> / night <i>incl. 18% GST</i></span>
-                </p>
-                </div>   
-            </div>
-        </a> 
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mt-1" id="listings-row">
+    <% for (let listing of allListings) { %>
+        <div class="col">
+            <a href="/listings/<%= listing._id %>" class="stay-card">
+                <div class="stay-img-wrap">
+                    <img src="<%= listing.image.url %>" alt="<%= listing.title %>" loading="lazy">
+                    <% if (listing.category) { %>
+                        <span class="stay-badge"><%= listing.category %></span>
+                    <% } %>
+                </div>
+                <div class="stay-body">
+                    <div class="stay-title"><%= listing.title %></div>
+                    <div class="stay-place"><%= listing.location %>, <%= listing.country %></div>
+                    <div class="stay-price">
+                        <span class="price-base"><b>&#8377; <%= listing.price.toLocaleString("en-IN") %></b> / night</span>
+                        <span class="price-total"><b>&#8377; <%= Math.round(listing.price * 1.18).toLocaleString("en-IN") %></b> / night <small class="text-muted">incl. 18% GST</small></span>
+                    </div>
+                </div>
+            </a>
+        </div>
     <% } %>
 </div>
 
@@ -115,7 +219,7 @@ const icons = {
         return "/listings?" + s.toString();
     };
 %>
-<nav class="mt-3 mb-4" aria-label="Listings pages">
+<nav class="mt-4 mb-4" aria-label="Listings pages">
     <ul class="pagination justify-content-center">
         <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
             <a class="page-link" href="<%= pageUrl(page - 1) %>">Previous</a>
@@ -141,6 +245,7 @@ const icons = {
         listingsRow.classList.toggle("show-total", on);
     }
 
+    // Remember the choice while browsing, so paging or filtering doesn't reset it
     applyTax(sessionStorage.getItem("showTotal") === "1");
 
     taxSwitch.addEventListener("change", () => {
@@ -148,4 +253,3 @@ const icons = {
         sessionStorage.setItem("showTotal", taxSwitch.checked ? "1" : "0");
     });
 </script>
-

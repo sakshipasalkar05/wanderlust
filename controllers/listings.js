@@ -3,6 +3,7 @@ const { cloudinary } = require("../cloudConfig.js");
 const categories = require("../utils/categories.js");
 const LISTINGS_PER_PAGE = 12;
 const User = require("../models/user.js");
+const geocode = require("../utils/geocode.js");
 
 const deleteCloudImage = async (filename) => {
   // Skip seed/default images, they aren't stored on Cloudinary
@@ -82,8 +83,19 @@ module.exports.createListing = async (req, res, next) => {
     };
   }
 
+  // Turn "location, country" into coordinates for the map
+  const geometry = await geocode(`${newListing.location}, ${newListing.country}`);
+  if (geometry) {
+    newListing.geometry = geometry;
+  }
+
   await newListing.save();
-  req.flash("success", "New listing created!");
+  req.flash(
+    "success",
+    geometry
+      ? "New listing created!"
+      : "New listing created, but we couldn't find its location on the map."
+  );
   res.redirect("/listings");
 };
 
@@ -104,18 +116,44 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateListing = async (req, res) => {
     let { id } = req.params;
+
+    // findByIdAndUpdate returns the document as it was BEFORE the update,
+    // which lets us compare the old place with the new one
     let listing = await Listing.findByIdAndUpdate(id, {
       ...req.body.listing,
     });
 
-    if(typeof req.file !== "undefined") {
+    let needsSave = false;
+
+    if (typeof req.file !== "undefined") {
       await deleteCloudImage(listing.image?.filename);
-      let url = req.file.path;
-      let filename = req.file.filename;
-      listing.image = {url, filename};
+      listing.image = { url: req.file.path, filename: req.file.filename };
+      needsSave = true;
+    }
+
+    // Re-geocode if the place changed, or if this listing has no coordinates yet
+    const { location, country } = req.body.listing;
+    const placeChanged = location !== listing.location || country !== listing.country;
+    const hasGeometry =
+      listing.geometry &&
+      listing.geometry.coordinates &&
+      listing.geometry.coordinates.length === 2;
+
+    if (placeChanged || !hasGeometry) {
+      const geometry = await geocode(`${location}, ${country}`);
+      if (geometry) {
+        listing.geometry = geometry;
+        needsSave = true;
+      } else if (placeChanged) {
+        // Don't keep a pin for the old place if the new one can't be found
+        await Listing.updateOne({ _id: id }, { $unset: { geometry: "" } });
+      }
+    }
+
+    if (needsSave) {
       await listing.save();
     }
-    
+
     req.flash("success", "Listing Updated!");
     res.redirect(`/listings/${id}`);
 };
@@ -148,5 +186,10 @@ module.exports.toggleWishlist = async (req, res) => {
     );
 
     req.flash("success", alreadySaved ? "Removed from your wishlist" : "Saved to your wishlist");
+
+    // If the request came from the wishlist page, go back there
+    if (req.body.from === "wishlist") {
+        return res.redirect("/wishlist");
+    }
     res.redirect(`/listings/${id}`);
 };

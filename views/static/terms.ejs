@@ -1,22 +1,41 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-    <div class="col-md-8 offset-md-2">
-        <h2>Terms of Service</h2>
-        <p class="text-muted">Last updated: <%= new Date().getFullYear() %></p>
+<style>
+    .policy h5 {
+        font-weight: 700;
+        margin-top: 1.75rem;
+        margin-bottom: 0.4rem;
+    }
 
-        <h5 class="mt-4">Using Wanderlust</h5>
-        <p>By using this site you agree to provide accurate information and to use the service lawfully.</p>
+    .policy p {
+        color: #444444;
+        line-height: 1.7;
+        margin-bottom: 0;
+    }
+</style>
 
-        <h5 class="mt-4">Your content</h5>
-        <p>You are responsible for the listings, reviews and images you post. Do not post content that is false, misleading, offensive or that you do not have the right to share.</p>
+<div class="row mt-4 mb-5">
+    <div class="col-12 col-md-10 col-lg-8 mx-auto">
+        <div class="page-card policy">
+            <h3 class="page-title">Terms of Service</h3>
+            <p class="page-subtitle">Last updated: <%= new Date().getFullYear() %></p>
 
-        <h5 class="mt-4">Reviews</h5>
-        <p>Reviews should reflect your genuine experience. We may remove reviews that break these rules.</p>
+            <h5>Using Wanderlust</h5>
+            <p>By using this site you agree to provide accurate information and to use the service lawfully.</p>
 
-        <h5 class="mt-4">Accounts</h5>
-        <p>You are responsible for keeping your password safe and for activity under your account.</p>
+            <h5>Your content</h5>
+            <p>You are responsible for the listings, reviews and images you post. Do not post content that is false, misleading, offensive or that you do not have the right to share.</p>
 
-        <h5 class="mt-4">Changes</h5>
-        <p>We may update these terms from time to time. Continued use of the site means you accept the updated terms.</p>
+            <h5>Reviews</h5>
+            <p>Reviews should reflect your genuine experience. We may remove reviews that break these rules.</p>
+
+            <h5>Accounts</h5>
+            <p>You are responsible for keeping your password safe and for activity under your account.</p>
+
+            <h5>Changes</h5>
+            <p>We may update these terms from time to time. Continued use of the site means you accept the updated terms.</p>
+
+            <hr class="mt-4">
+            <a href="/privacy" class="text-decoration-none fw-bold" style="color: var(--brand);">Read our Privacy Policy <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
     </div>
 </div>

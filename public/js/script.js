@@ -16,7 +16,7 @@
       form.classList.add('was-validated')
     }, false)
   })
-})()
+})();
 
 // Image preview for file inputs marked with data-preview="#some-img-id"
 (() => {
@@ -45,5 +45,20 @@
         preview.classList.add('d-none')
       }
     })
+  })
+})();
+
+// Auto-hide flash messages: any element with data-autohide="<milliseconds>"
+(() => {
+  'use strict'
+
+  document.querySelectorAll('[data-autohide]').forEach(alertBox => {
+    const delay = Number(alertBox.dataset.autohide) || 4000
+
+    setTimeout(() => {
+      alertBox.style.transition = 'opacity 0.5s'
+      alertBox.style.opacity = '0'
+      setTimeout(() => alertBox.remove(), 500)
+    }, delay)
   })
 })()

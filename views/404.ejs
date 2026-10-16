@@ -1,9 +1,15 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-5">
-    <div class="col-md-6 offset-md-3 text-center">
-        <i class="fa-solid fa-compass" style="font-size: 4rem; color: #fe424d;"></i>
-        <h1 class="mt-3">Page not found</h1>
-        <p class="text-muted">The page you're looking for doesn't exist or may have been moved.</p>
-        <a href="/listings" class="btn btn-dark add-btn mt-2">Back to listings</a>
+<div class="row mt-5 mb-5">
+    <div class="col-12 col-md-8 col-lg-6 mx-auto">
+        <div class="page-card text-center">
+            <div style="font-size: clamp(4rem, 15vw, 7rem); font-weight: 800; color: var(--brand); line-height: 1;">404</div>
+            <h3 class="page-title mt-3">Page not found</h3>
+            <p class="page-subtitle">The page you're looking for doesn't exist or may have been moved.</p>
+
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a href="/listings" class="btn btn-brand">Back to listings</a>
+                <a href="/" class="btn btn-brand-outline">Go to home</a>
+            </div>
+        </div>
     </div>
 </div>

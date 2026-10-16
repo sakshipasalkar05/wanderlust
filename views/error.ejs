@@ -1,10 +1,18 @@
 <% layout("/layouts/boilerplate") %>
+<div class="row mt-5 mb-5">
+    <div class="col-12 col-md-8 col-lg-6 mx-auto">
+        <div class="page-card text-center">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3.5rem; color: var(--brand);"></i>
+            <h3 class="page-title mt-3">Something went wrong</h3>
+            <% if (err.statusCode) { %>
+                <p class="text-muted small mb-2">Error <%= err.statusCode %></p>
+            <% } %>
+            <p class="page-subtitle"><%= err.message %></p>
 
-<div class="row mt-3">
-    <div class="alert alert-danger col-12 col-md-6 offset-md-3" role="alert">
-        
-        <p class="alert-heading"><%= err.message %></p>
-        
-    </div> 
-    
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a href="/listings" class="btn btn-brand">Back to listings</a>
+                <a href="/" class="btn btn-brand-outline">Go to home</a>
+            </div>
+        </div>
+    </div>
 </div>

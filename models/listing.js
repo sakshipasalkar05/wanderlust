@@ -40,7 +40,17 @@ const listingSchema = new Schema({
     category: {
         type: String,
         enum: categories,
-    }
+    },
+    geometry: {
+        type: {
+            type: String,
+            enum: ["Point"],
+        },
+        coordinates: {
+            type: [Number],
+            default: undefined,
+        },
+    },
     
 });
 

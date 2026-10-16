@@ -1,22 +1,41 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-    <div class="col-md-8 offset-md-2">
-        <h2>Privacy Policy</h2>
-        <p class="text-muted">Last updated: <%= new Date().getFullYear() %></p>
+<style>
+    .policy h5 {
+        font-weight: 700;
+        margin-top: 1.75rem;
+        margin-bottom: 0.4rem;
+    }
 
-        <h5 class="mt-4">What we collect</h5>
-        <p>When you sign up, we store your username, email address and a securely hashed version of your password. When you create a listing or review, we store the content you submit, including any images you upload.</p>
+    .policy p {
+        color: #444444;
+        line-height: 1.7;
+        margin-bottom: 0;
+    }
+</style>
 
-        <h5 class="mt-4">How we use it</h5>
-        <p>Your information is used to run your account, show your listings and reviews, and keep the site secure. We do not sell your personal information.</p>
+<div class="row mt-4 mb-5">
+    <div class="col-12 col-md-10 col-lg-8 mx-auto">
+        <div class="page-card policy">
+            <h3 class="page-title">Privacy Policy</h3>
+            <p class="page-subtitle">Last updated: <%= new Date().getFullYear() %></p>
 
-        <h5 class="mt-4">Cookies</h5>
-        <p>We use a session cookie to keep you logged in. It does not track you across other websites.</p>
+            <h5>What we collect</h5>
+            <p>When you sign up, we store your username, email address and a securely hashed version of your password. When you create a listing or review, we store the content you submit, including any images you upload.</p>
 
-        <h5 class="mt-4">Third-party services</h5>
-        <p>Uploaded images are stored with Cloudinary. Their handling of data is covered by their own privacy policy.</p>
+            <h5>How we use it</h5>
+            <p>Your information is used to run your account, show your listings and reviews, and keep the site secure. We do not sell your personal information.</p>
 
-        <h5 class="mt-4">Your choices</h5>
-        <p>You can edit or delete your listings and reviews at any time.</p>
+            <h5>Cookies</h5>
+            <p>We use a session cookie to keep you logged in. It does not track you across other websites.</p>
+
+            <h5>Third-party services</h5>
+            <p>Uploaded images are stored with Cloudinary. Their handling of data is covered by their own privacy policy.</p>
+
+            <h5>Your choices</h5>
+            <p>You can edit or delete your listings and reviews at any time.</p>
+
+            <hr class="mt-4">
+            <a href="/terms" class="text-decoration-none fw-bold" style="color: var(--brand);">Read our Terms of Service <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
     </div>
 </div>
