@@ -25,7 +25,6 @@ Photo, host, price card, average rating, reviews and an interactive map of the l
 ![Listing details page with map](screenshots/listing-detail.png)
 
 ### Map of a listing
-Every listing on the current page, pinned on one map.
 
 ![Map of a listing](screenshots/listings-map.png)
 
